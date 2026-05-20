@@ -8,11 +8,7 @@
 #   ./install.sh -l, --list       # list available items and exit
 #   ./install.sh -h, --help       # show this help
 #
-# Idempotent. Refuses to run if ~/.claude/skills or ~/.claude/commands
-# is a whole-directory symlink (legacy install) — convert it first:
-#
-#   rm ~/.claude/skills ~/.claude/commands
-#   mkdir ~/.claude/skills ~/.claude/commands
+# Idempotent.
 #
 set -euo pipefail
 
@@ -20,7 +16,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${HOME}/.claude"
 
 usage() {
-  sed -n '2,16p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,11p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
 
 list_items() {
@@ -38,13 +34,15 @@ list_items() {
   done
 }
 
-# Ensure ~/.claude/<kind> exists and is not a legacy whole-dir symlink.
+# Ensure ~/.claude/<kind> exists as a real directory. Refuse to install
+# per-item symlinks into a directory that is itself a symlink — doing so
+# would write inside the symlink target.
 ensure_dst_dir() {
   local kind="$1"
   local dst="${CLAUDE_DIR}/${kind}"
   if [[ -L "$dst" ]]; then
-    echo "ERROR: ${dst} is a symlink (legacy whole-dir install)." >&2
-    echo "       Remove it and create a real directory, then re-run:" >&2
+    echo "ERROR: ${dst} is a symlink, not a real directory." >&2
+    echo "       Replace it before installing:" >&2
     echo "           rm ${dst} && mkdir ${dst}" >&2
     exit 1
   fi

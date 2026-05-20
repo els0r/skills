@@ -5,19 +5,13 @@ A pack of [Claude Code](https://docs.claude.com/claude-code) skills and slash co
 ## Install
 
 ```sh
-./install.sh                          # everything
-./install.sh go-style research-codebase   # only the named items
-./install.sh --list                   # show available skills and commands
+./install.sh                              # everything
+./install.sh go-style                     # a single skill
+./install.sh go-style research-codebase   # any combination of skills and commands
+./install.sh --list                       # show available skills and commands
 ```
 
 `install.sh` creates per-item symlinks into `~/.claude/skills/` and `~/.claude/commands/`. Names are matched against `skills/` first, then `commands/`. It is idempotent and warns on conflicts.
-
-If `~/.claude/skills` or `~/.claude/commands` is a whole-directory symlink (from an earlier install), convert each to a real directory first:
-
-```sh
-rm ~/.claude/skills ~/.claude/commands
-mkdir ~/.claude/skills ~/.claude/commands
-```
 
 ## Skills
 

@@ -21,6 +21,7 @@ A pack of [Claude Code](https://docs.claude.com/claude-code) skills and slash co
 | [codebase-analyzer](skills/codebase-analyzer/) | research | Explains HOW components work with file:line refs; no improvements suggested. |
 | [codebase-locator](skills/codebase-locator/) | research | Finds WHERE code lives — files, directories, components. |
 | [coding-style](skills/coding-style/) | style | Cross-language engineering principles: structure, clarity, restraint. |
+| [conventional-commit](skills/conventional-commit/) | git, process | Compose commits in Conventional Commits style when the repo uses it; otherwise mirror the repo's existing format. |
 | [design-rubric](skills/design-rubric/) | design, review | Six-criterion rubric for critiquing UI wireframes and layouts. |
 | [diagnose](skills/diagnose/) | debugging, process | Reproduce → minimise → hypothesise → instrument → fix loop for hard bugs. |
 | [go-instrumentation](skills/go-instrumentation/) | golang, observability | Structured logging, tracing, metrics — library-agnostic principles with `els0r/telemetry` as reference impl. |

@@ -33,6 +33,7 @@ mkdir ~/.claude/skills ~/.claude/commands
 | [go-testing](skills/go-testing/) | golang, testing | Table-driven tests, testify, fuzzing, race detection conventions. |
 | [grill-me](skills/grill-me/) | process, planning | Interview-style stress test of a plan, one branch at a time. |
 | [grill-with-docs](skills/grill-with-docs/) | process, planning, docs | Grilling that updates CONTEXT.md and ADRs as decisions land. |
+| [improve-go-architecture](skills/improve-go-architecture/) | golang, architecture | Find deepening opportunities in Go packages: deletion test, seam location, shallow-smell catalogue. |
 | [to-issues](skills/to-issues/) | process, planning | Convert a plan or PRD into tracer-bullet issues on GitHub. |
 
 ## Commands
@@ -48,7 +49,7 @@ mkdir ~/.claude/skills ~/.claude/commands
 
 ## Credits
 
-`grill-me`, `grill-with-docs`, `diagnose`, and `to-issues` are adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills) (MIT-licensed).
+`grill-me`, `grill-with-docs`, `diagnose`, `to-issues`, and `improve-go-architecture` are adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills) (MIT-licensed).
 
 ## License
 

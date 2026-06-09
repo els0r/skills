@@ -51,8 +51,8 @@ project's main branch, in isolated worktrees, dispatched to subagents.
 1. Triage the user story into one or more issues (`gh issue create`),
    applying the project's triage taxonomy (size, priority, component,
    kind, etc.) if it has one.
-2. For each issue, dispatch a subagent in an isolated worktree
-   (`Agent` with `isolation: "worktree"`) with a self-contained brief.
+2. For each issue, dispatch an implementation agent with a
+   self-contained brief, using the dispatch backend selected per §1.1.
 3. Subscribe to the resulting PR via the GitHub MCP server (or
    equivalent) so CI and review events stream back.
 4. On merge, queue the next dependent issue. On CI failure or
@@ -61,6 +61,36 @@ project's main branch, in isolated worktrees, dispatched to subagents.
 **If skipped.** Coordination state mixes with code commits, the
 session branch accumulates unrelated WIP, and rebases against `main`
 become a merge-conflict swamp.
+
+### 1.1 Dispatch backend — container layer when the project provides one
+
+**Rule.** Before dispatching, check whether the project ships a
+container-enforced dispatch layer — a marker directory at the repo root
+(e.g. `.sandcastle/`) with its own README. Its presence selects the
+backend.
+
+- **Layer present** → dispatch through it, not via `Agent`. Each agent
+  runs inside a sandbox (typically Docker, on a bind-mounted worktree),
+  so the §3 guardrails are container-enforced and the sandbox is
+  GitHub-credential-free. The orchestrator stays on the host. Read the
+  layer's README for the concrete invocation, flags, and output
+  contract — don't assume them. What holds for any such layer:
+
+  - It returns a machine-readable result (e.g. a JSON line) naming the
+    branch and the commits produced. Any `report`/summary field is the
+    agent's claim, not evidence (§4.3); verify against the commits.
+  - The sandbox never touches GitHub, so the orchestrator still expands
+    the issue into the prompt, pushes the branch, and opens the PR
+    (`Closes #N`) from the host (§4.8).
+  - The layer may cap concurrency (often one sandbox at a time on modest
+    hardware). Check before fanning out; don't assume parallel dispatch.
+
+- **No layer** → dispatch with `Agent` (`isolation: "worktree"`) as in
+  the Loop above; the §3 guardrails are prompt-enforced (§4.4).
+
+**If skipped.** Dispatching via `Agent` when a container layer exists
+forfeits its enforcement of the no-force-push / no-hook-skip guardrails
+and runs the agent against host credentials it should never see.
 
 ---
 
@@ -117,7 +147,10 @@ authorization for one instance does not generalize).
   unrelated context into the diff.
 - **Subagents inherit these guardrails.** The dispatch prompt must
   state them explicitly — subagents do not see this file or the
-  parent session's history.
+  parent session's history. Under a container layer (§1.1) the layer's
+  standing prompt carries them and the container enforces
+  network/credential isolation; the orchestrator still owns
+  push / PR / merge.
 
 **If a guardrail blocks progress.** Stop and ask. Do not search for a
 flag that bypasses it.
@@ -166,7 +199,11 @@ discussed" or "the D1 decision" are noise to it.
 verbatim scope, the prior decisions and their rationale (e.g. why the
 narrower scope, not the original), the branch name and base, the
 commit-message convention, the PR-body requirements, and the §3
-guardrails. Err long.
+guardrails. Err long. Under a container layer (§1.1), the dispatcher
+typically forwards only the issue **title and body** plus a standing
+prompt file — not this session's context — so any prior decision the
+agent must honor has to live in the issue body before you dispatch
+(§4.6).
 
 ### 4.5 Bundled agents may discover plan-invalidating constraints
 
@@ -199,6 +236,19 @@ orchestration branch "just for now."
 PRs. If the orchestration itself needs a doc, file an XS PR for it on
 its own branch off `main`.
 
+### 4.8 The sandbox cannot reach GitHub
+
+Under a container dispatch layer (§1.1) the agent has no `gh` and no
+token; its work leaves the container **only as git commits on its
+branch**. It cannot push, open a PR, or read the issue itself.
+
+**Resolve.** The orchestrator does all GitHub I/O on the host: the layer
+expands the issue into the prompt, and after the run you parse its
+result, verify `git log <branch>` and `git diff <base>...<branch>`
+against scope, then push and open the PR with `Closes #N`. Treat an empty
+commit list as a failed run regardless of how confident the agent's
+report reads.
+
 ---
 
 ## Quick checklist (before dispatching an autonomous bundle)
@@ -206,6 +256,8 @@ its own branch off `main`.
 - [ ] User story decomposed into issues, with the project's triage
       taxonomy applied if any (size, priority, component, kind, ...).
 - [ ] Bundle composition confirmed with the user.
+- [ ] Dispatch backend selected per §1.1 — the project's container layer
+      (e.g. `.sandcastle/`) when present, host `Agent` worktree otherwise.
 - [ ] Each subagent prompt is self-contained (issue verbatim, prior
       decisions, branch/base, commit convention, PR requirements,
       §3 guardrails).

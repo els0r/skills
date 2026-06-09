@@ -42,6 +42,7 @@ A pack of [Claude Code](https://docs.claude.com/claude-code) skills and slash co
 | [design-prompt](commands/design-prompt.md) | ai, prompt | Refine a draft prompt for Claude Opus 4.7. |
 | [implement-plan](commands/implement-plan.md) | planning, process | Execute an approved plan phase by phase with verification. |
 | [refactor-react](commands/refactor-react.md) | react, refactor | Refactor a Vite + Zustand app for SRP, readability, performance. |
+| [refactor-skill](commands/refactor-skill.md) | skills, refactor, meta | Restructure a skill for progressive disclosure: lean entry point, on-demand references. |
 | [research-codebase](commands/research-codebase.md) | research | Comprehensive codebase research written to a structured doc. |
 
 ## Credits

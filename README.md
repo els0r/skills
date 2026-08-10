@@ -18,6 +18,7 @@ A pack of [Claude Code](https://docs.claude.com/claude-code) skills and slash co
 | Skill | Tags | Description |
 |---|---|---|
 | [autonomous-orchestration](skills/autonomous-orchestration/) | process, orchestration | Hand off multi-PR coordination across worktrees with PR/CI watching. |
+| [blast-radius](skills/blast-radius/) | experimental, review, audit, process | Risk-ranked audit map of a codebase so the human reads where failure concentrates — map and scaffolding only, no verdicts. |
 | [codebase-analyzer](skills/codebase-analyzer/) | research | Explains HOW components work with file:line refs; no improvements suggested. |
 | [codebase-locator](skills/codebase-locator/) | research | Finds WHERE code lives — files, directories, components. |
 | [coding-style](skills/coding-style/) | style | Cross-language engineering principles: structure, clarity, restraint. |
